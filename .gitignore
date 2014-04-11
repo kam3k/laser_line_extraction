@@ -1,0 +1,9 @@
+*.pyc
+*.swp
+*.swo
+*~
+bin/*
+build/*
+data/*
+msg_gen/*
+src/__pycache__/*
