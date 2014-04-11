@@ -110,13 +110,19 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
     this_directory = os.path.dirname(os.path.realpath(__file__))
-    with open(os.path.join(this_directory, 'data', 'laser_scan_2.txt'), 'r') as f:
-        scan = json.load(f)
+    scans = []
+    for i in range(1,7):
+        filename = "laser_scan_" + str(i) + ".json"
+        with open(os.path.join(this_directory, 'data', filename), 'r') as f:
+            scans.append(json.load(f))
 
-    set_data(scan['ranges'], scan['bearings'])
-    line_list = run()
+    for scan in scans:
+        set_data(scan['ranges'], scan['bearings'])
+        line_list = run()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(lt.X, lt.Y, 'kx')
+        for line in line_list:
+            ax.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]], 'r')
 
-    plt.plot(lt.X, lt.Y, 'kx')
-    for line in line_list:
-        plt.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]], 'r')
     plt.show()
