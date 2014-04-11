@@ -109,6 +109,7 @@ if __name__ == '__main__':
     import json
     import matplotlib.pyplot as plt
 
+    # Load data
     this_directory = os.path.dirname(os.path.realpath(__file__))
     scans = []
     for i in range(1,7):
@@ -116,13 +117,18 @@ if __name__ == '__main__':
         with open(os.path.join(this_directory, 'data', filename), 'r') as f:
             scans.append(json.load(f))
 
+    # Extract lines and plot
+    sub = 231
+    fig = plt.figure()
     for scan in scans:
         set_data(scan['ranges'], scan['bearings'])
         line_list = run()
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax = fig.add_subplot(sub)
         ax.plot(lt.X, lt.Y, 'kx')
+        ax.axis('equal')
         for line in line_list:
             ax.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]], 'r')
+        sub += 1
+    fig.tight_layout()
 
     plt.show()
