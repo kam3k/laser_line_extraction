@@ -16,17 +16,17 @@ class LLENode(object):
     def __init__(self):
         rospy.init_node("line_extractor")
         # Set parameters
-        self.range_fraction = rospy.get_param('range_uncertainty_fraction', True)
-        self.range_std_dev = rospy.get_param('range_std_dev', 0.01)
-        self.bearing_std_dev = rospy.get_param('bearing_std_dev', 0.0001)
-        min_range = rospy.get_param('min_range', 0.2)
-        outlier_dist = rospy.get_param('outlier_dist', 0.05)
-        min_split_dist = rospy.get_param('min_split_dist', 0.05)
-        min_line_length = rospy.get_param('min_line_length', 0.5)
-        min_line_points = rospy.get_param('min_line_points', 9)
-        max_line_gap = rospy.get_param('max_line_gap', 0.4)
-        least_sq_angle_thresh = rospy.get_param('least_sq_angle_thresh', 1e-4)
-        least_sq_radius_thresh = rospy.get_param('least_sq_radius_thresh', 1e-4)
+        self.range_fraction = rospy.get_param('~range_uncertainty_fraction', True)
+        self.range_std_dev = rospy.get_param('~range_std_dev', 0.01)
+        self.bearing_std_dev = rospy.get_param('~bearing_std_dev', 0.0001)
+        min_range = rospy.get_param('~min_range', 0.2)
+        outlier_dist = rospy.get_param('~outlier_dist', 0.05)
+        min_split_dist = rospy.get_param('~min_split_dist', 0.05)
+        min_line_length = rospy.get_param('~min_line_length', 0.5)
+        min_line_points = rospy.get_param('~min_line_points', 9)
+        max_line_gap = rospy.get_param('~max_line_gap', 0.4)
+        least_sq_angle_thresh = rospy.get_param('~least_sq_angle_thresh', 1e-4)
+        least_sq_radius_thresh = rospy.get_param('~least_sq_radius_thresh', 1e-4)
         # Initializations
         self.line_extractor = LineExtractor(min_range, outlier_dist,
                 min_split_dist, min_line_length, min_line_points,
