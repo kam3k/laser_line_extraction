@@ -15,7 +15,8 @@ class LLENode(object):
 
     def __init__(self):
         rospy.init_node("line_extractor")
-        # Set parameters
+        # Get parameters
+        scan_topic = rospy.get_param('~scan_topic', '/scan')
         self.range_fraction = rospy.get_param('~range_uncertainty_fraction', True)
         self.range_std_dev = rospy.get_param('~range_std_dev', 0.01)
         self.bearing_std_dev = rospy.get_param('~bearing_std_dev', 0.0001)
@@ -39,7 +40,7 @@ class LLENode(object):
         self.lock = threading.Lock()
         # Publisher and subscriber
         self.publisher = rospy.Publisher('/line_segments', LineSegmentList)
-        rospy.Subscriber('/sick/lms111/scan', LaserScan, self.process_scan, queue_size = 1)
+        rospy.Subscriber(scan_topic, LaserScan, self.process_scan, queue_size=1)
 
     def populate_message(self, line):
         line_seg_msg = LineSegment()

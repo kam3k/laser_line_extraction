@@ -1,5 +1,6 @@
 <launch>
   <node name="line_extractor" pkg="laser_line_extraction" type="lle_node.py">
+    <param name="~scan_topic" value="/scan" />
     <param name="~range_uncertainty_fraction" value="True" />
     <param name="~range_std_dev" value="0.01" />
     <param name="~bearing_std_dev" value="0.00001" />
