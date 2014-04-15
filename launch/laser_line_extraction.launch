@@ -1,10 +1,12 @@
 <launch>
   <node name="line_extractor" pkg="laser_line_extraction" type="lle_node.py">
     <param name="~scan_topic" value="/scan" />
+    <param name="~frame_id" value="/laser" />
+    <param name="~publish_markers" value="True" />
     <param name="~range_uncertainty_fraction" value="True" />
     <param name="~range_std_dev" value="0.01" />
     <param name="~bearing_std_dev" value="0.00001" />
-    <param name="~min_range" value="0.2" />
+    <param name="~min_range" value="0.4" />
     <param name="~outlier_dist" value="0.05" />
     <param name="~min_split_dist" value="0.05" />
     <param name="~min_line_length" value="0.5" />
