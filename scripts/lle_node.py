@@ -44,8 +44,9 @@ class LLENode(object):
         self.lock = threading.Lock()
         # Publishers and subscribers
         self.line_seg_publisher = rospy.Publisher('/line_segments', LineSegmentList)
-        self.marker_publisher = rospy.Publisher('/line_markers', Marker)
         rospy.Subscriber(scan_topic, LaserScan, self.process_scan, queue_size=1)
+        if self.pub_markers:
+            self.marker_publisher = rospy.Publisher('/line_markers', Marker)
 
     def populate_marker_msg(self, lines):
         marker = Marker()
