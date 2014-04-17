@@ -28,6 +28,9 @@ class LineExtractor(object):
             raise UnboundLocalError("Must set data before running.")
         self._filter_close_points()
         self._filter_outlier_points()
+        # Don't bother looking for lines if there aren't enough points
+        if len(self.indices) <= max(self.min_line_points, 3):
+            return []
         lines = []
         self._split(self.indices[:], lines)
         lines = self._filter_short_lines(lines)
@@ -67,6 +70,8 @@ class LineExtractor(object):
 
     def _filter_outlier_points(self):
         new_indices = []
+        if len(self.indices) < 3:
+            return
         for i, p_i in enumerate(self.indices):
             if i == 0: # first point
                 p_j = self.indices[i+1]
