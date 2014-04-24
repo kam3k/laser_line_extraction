@@ -6,6 +6,7 @@ project(laser_line_extraction)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  roscpp
   sensor_msgs
   message_generation
 )
@@ -80,9 +81,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES laser_line_extraction
-  CATKIN_DEPENDS message_runtime
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS message_runtime roscpp
 #  DEPENDS system_lib
 )
 
@@ -90,29 +91,17 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
-## Declare a cpp library
-# add_library(laser_line_extraction
-#   src/${PROJECT_NAME}/laser_line_extraction.cpp
-# )
+add_library(line_extraction src/line_extraction.cpp)
+target_link_libraries(line_extraction ${catkin_LIBRARIES})
 
-## Declare a cpp executable
-# add_executable(laser_line_extraction_node src/laser_line_extraction_node.cpp)
+add_library(line_extraction_node src/line_extraction_node.cpp)
+target_link_libraries(line_extraction_node line_extraction)
+add_dependencies(line_extraction_node laser_line_extraction_generate_messages_cpp)
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(laser_line_extraction_node laser_line_extraction_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(laser_line_extraction_node
-#   ${catkin_LIBRARIES}
-# )
+add_executable(line_extraction_main src/line_extraction_main.cpp)
+target_link_libraries(line_extraction_main line_extraction_node)
 
 #############
 ## Install ##
