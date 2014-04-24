@@ -1,0 +1,7 @@
+<launch>
+  <node name="line_extractor" pkg="laser_line_extraction" type="line_extraction_main" output="screen">
+    <param name="~scan_topic" value="front_lidar/scan" />
+    <param name="~frequency" value="10.0" />
+  </node>
+</launch>
+
