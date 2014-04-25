@@ -33,6 +33,7 @@ class LineExtractor(object):
             return []
         lines = []
         self._split(self.indices[:], lines)
+        print "Python number of split lines: ", len(lines)
         lines = self._filter_short_lines(lines)
         lines = self._filter_sparse_lines(lines)
         for l in lines:

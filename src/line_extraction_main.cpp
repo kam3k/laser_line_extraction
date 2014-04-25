@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   line_extraction::LineExtractionNode node(nh, nh_local);
 
   double frequency;
-  nh_local.param<double>("frequency", frequency, 20);
+  nh_local.param<double>("frequency", frequency, 25);
   ROS_DEBUG("Frequency set to %0.1f Hz", frequency);
   ros::Rate rate(frequency);
 

@@ -1,6 +1,6 @@
 <launch>
-  <node name="line_extractor" pkg="laser_line_extraction" type="lle_node.py">
-    <param name="~scan_topic" value="/scan" />
+  <node name="line_extractor" pkg="laser_line_extraction" type="lle_node.py" output="screen">
+    <param name="~scan_topic" value="/front_lidar/scan" />
     <param name="~frame_id" value="/laser" />
     <param name="~publish_markers" value="True" />
     <param name="~range_uncertainty_fraction" value="True" />
