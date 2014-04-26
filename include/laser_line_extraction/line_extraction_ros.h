@@ -1,27 +1,27 @@
-#ifndef LINE_EXTRACTION_NODE_H
-#define LINE_EXTRACTION_NODE_H
+#ifndef LINE_EXTRACTION_ROS_H
+#define LINE_EXTRACTION_ROS_H
 
 #include <vector>
 #include <string>
 #include <ros/ros.h>
-#include <ros/console.h>
 #include <sensor_msgs/LaserScan.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
-#include "laser_line_extraction/line_extraction.h"
 #include "laser_line_extraction/LineSegment.h"
 #include "laser_line_extraction/LineSegmentList.h"
+#include "laser_line_extraction/line_extraction.h"
+#include "laser_line_extraction/line.h"
 
 namespace line_extraction
 {
 
-class LineExtractionNode
+class LineExtractionROS
 {
 
 public:
   // Constructor / destructor
-  LineExtractionNode(ros::NodeHandle&, ros::NodeHandle&);
-  ~LineExtractionNode();
+  LineExtractionROS(ros::NodeHandle&, ros::NodeHandle&);
+  ~LineExtractionROS();
   // Running
   void run();
 
@@ -45,8 +45,8 @@ private:
   void populateMarkerMsg(const std::vector<Line>&, visualization_msgs::Marker&);
   void cacheData(const sensor_msgs::LaserScan::ConstPtr&);
   void laserScanCallback(const sensor_msgs::LaserScan::ConstPtr&);
-}; // LineExtractionNode class
+};
 
-} // line_extraction namespace
+} // namespace line_extraction
 
 #endif

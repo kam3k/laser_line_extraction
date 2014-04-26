@@ -1,0 +1,8 @@
+<launch>
+  <node name="line_extractor" pkg="laser_line_extraction" type="line_extraction_node" output="screen" launch-prefix="nemiver">
+    <param name="~scan_topic" value="front_lidar/scan" />
+    <param name="~frequency" value="50.0" />
+    <param name="~publish_markers" value="true" />
+  </node>
+</launch>
+
