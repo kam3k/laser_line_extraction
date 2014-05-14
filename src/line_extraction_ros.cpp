@@ -6,8 +6,9 @@
 namespace line_extraction
 {
 
+///////////////////////////////////////////////////////////////////////////////
 // Constructor / destructor
-
+///////////////////////////////////////////////////////////////////////////////
 LineExtractionROS::LineExtractionROS(ros::NodeHandle& nh, ros::NodeHandle& nh_local):
   nh_(nh),
   nh_local_(nh_local),
@@ -26,10 +27,9 @@ LineExtractionROS::~LineExtractionROS()
 {
 }
 
-
-
+///////////////////////////////////////////////////////////////////////////////
 // Run
-
+///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::run()
 {
   // Extract the lines
@@ -52,10 +52,9 @@ void LineExtractionROS::run()
   }
 }
 
-
-
+///////////////////////////////////////////////////////////////////////////////
 // Load ROS parameters
-
+///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::loadParameters()
 {
   
@@ -128,10 +127,9 @@ void LineExtractionROS::loadParameters()
   ROS_DEBUG("*************************************");
 }
 
-
-
+///////////////////////////////////////////////////////////////////////////////
 // Populate messages
-
+///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::populateLineSegListMsg(const std::vector<Line> &lines,
                                                 laser_line_extraction::LineSegmentList &line_list_msg)
 {
@@ -177,10 +175,9 @@ void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
   marker_msg.header.stamp = ros::Time::now();
 }
 
-
-
+///////////////////////////////////////////////////////////////////////////////
 // Cache data on first LaserScan message received
-
+///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::cacheData(const sensor_msgs::LaserScan::ConstPtr &scan_msg)
 {
   std::vector<double> bearings, cos_bearings, sin_bearings;
@@ -199,10 +196,9 @@ void LineExtractionROS::cacheData(const sensor_msgs::LaserScan::ConstPtr &scan_m
   ROS_DEBUG("Data has been cached.");
 }
 
-
-
+///////////////////////////////////////////////////////////////////////////////
 // Main LaserScan callback
-
+///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr &scan_msg)
 {
   if (!data_cached_)
