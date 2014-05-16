@@ -15,6 +15,18 @@ Line::Line(const CachedData &c_data, const RangeData &r_data, const Params &para
 {
 }
 
+Line::Line(double angle, double radius, const boost::array<double, 4> &covariance,
+       const boost::array<double, 2> &start, const boost::array<double, 2> &end,
+       const std::vector<unsigned int> &indices):
+  angle_(angle),
+  radius_(radius),
+  covariance_(covariance),
+  start_(start),
+  end_(end),
+  indices_(indices)
+{
+}
+
 Line::~Line()
 {
 }
@@ -35,6 +47,11 @@ const boost::array<double, 4>& Line::getCovariance() const
 const boost::array<double, 2>& Line::getEnd() const
 {
   return end_;
+}
+
+const std::vector<unsigned int>& Line::getIndices() const
+{
+  return indices_;
 }
 
 double Line::getRadius() const
@@ -65,6 +82,20 @@ double Line::length() const
 unsigned int Line::numPoints() const
 {
   return indices_.size();  
+}
+
+void Line::projectEndpoints()
+{
+  double s = -1.0 / tan(angle_);
+  double b = radius_ / sin(angle_);
+  double x = start_[0];
+  double y = start_[1];
+  start_[0] = (s * y + x - s * b) / (pow(s, 2) + 1);
+  start_[1] = (pow(s, 2) * y + s * x + b) / (pow(s, 2) + 1);
+  x = end_[0];
+  y = end_[1];
+  end_[0] = (s * y + x - s * b) / (pow(s, 2) + 1);
+  end_[1] = (pow(s, 2) * y + s * x + b) / (pow(s, 2) + 1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -254,20 +285,6 @@ void Line::calcPointScalarCovariances()
     point_scalar_vars_.push_back(P);
   }
   p_rr_ = 1.0 / inverse_P_sum;
-}
-
-void Line::projectEndpoints()
-{
-  double s = -1.0 / tan(angle_);
-  double b = radius_ / sin(angle_);
-  double x = start_[0];
-  double y = start_[1];
-  start_[0] = (s * y + x - s * b) / (pow(s, 2) + 1);
-  start_[1] = (pow(s, 2) * y + s * x + b) / (pow(s, 2) + 1);
-  x = end_[0];
-  y = end_[1];
-  end_[0] = (s * y + x - s * b) / (pow(s, 2) + 1);
-  end_[1] = (pow(s, 2) * y + s * x + b) / (pow(s, 2) + 1);
 }
 
 void Line::radiusFromLeastSq()

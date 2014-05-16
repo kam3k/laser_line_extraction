@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <boost/array.hpp>
+#include <Eigen/Dense>
 #include "laser_line_extraction/utilities.h"
 #include "laser_line_extraction/line.h"
 
@@ -45,6 +46,8 @@ private:
   // Line data
   std::vector<Line> lines_;
   // Methods
+  double chiSquared(const Eigen::Vector2d&, const Eigen::Matrix2d&,
+                    const Eigen::Matrix2d&);
   double distBetweenPoints(unsigned int index_1, unsigned int index_2);
   void   filterClosePoints();
   void   filterOutlierPoints();

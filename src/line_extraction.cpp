@@ -1,5 +1,7 @@
 #include "laser_line_extraction/line_extraction.h"
 #include <algorithm>
+#include <Eigen/Dense>
+#include <iostream>
 
 namespace line_extraction
 {
@@ -131,6 +133,12 @@ void LineExtraction::setOutlierDist(double value)
 ///////////////////////////////////////////////////////////////////////////////
 // Utility methods
 ///////////////////////////////////////////////////////////////////////////////
+double LineExtraction::chiSquared(const Eigen::Vector2d &dL, const Eigen::Matrix2d &P_1,
+                                  const Eigen::Matrix2d &P_2)
+{
+  return dL.transpose() * (P_1 + P_2).inverse() * dL;
+}
+
 double LineExtraction::distBetweenPoints(unsigned int index_1, unsigned int index_2)
 {
   return sqrt(pow(r_data_.xs[index_1] - r_data_.xs[index_2], 2) + 
@@ -226,7 +234,54 @@ void LineExtraction::filterLines()
 
 void LineExtraction::mergeLines()
 {
-  
+  std::vector<Line> merged_lines;
+
+  for (std::size_t i = 1; i < lines_.size(); ++i)
+  {
+    // Get L, P_1, P_2 of consecutive lines
+    Eigen::Vector2d L_1(lines_[i-1].getRadius(), lines_[i-1].getAngle());
+    Eigen::Vector2d L_2(lines_[i].getRadius(), lines_[i].getAngle());
+    Eigen::Matrix2d P_1;
+    P_1 << lines_[i-1].getCovariance()[0], lines_[i-1].getCovariance()[1],
+           lines_[i-1].getCovariance()[2], lines_[i-1].getCovariance()[3];
+    Eigen::Matrix2d P_2;
+    P_2 << lines_[i].getCovariance()[0], lines_[i].getCovariance()[1],
+           lines_[i].getCovariance()[2], lines_[i].getCovariance()[3];
+
+    // Merge lines if chi-squared distance is less than 3
+    if (chiSquared(L_1 - L_2, P_1, P_2) < 3)
+    {
+      // Get merged angle, radius, and covariance
+      Eigen::Matrix2d P_m = (P_1.inverse() + P_2.inverse()).inverse();
+      Eigen::Vector2d L_m = P_m * (P_1.inverse() * L_1 + P_2.inverse() * L_2);
+      // Populate new line with these merged parameters
+      boost::array<double, 4> cov;
+      cov[0] = P_m(0,0);
+      cov[1] = P_m(0,1);
+      cov[2] = P_m(1,0);
+      cov[3] = P_m(1,1);
+      std::vector<unsigned int> indices;
+      const std::vector<unsigned int> &ind_1 = lines_[i-1].getIndices();
+      const std::vector<unsigned int> &ind_2 = lines_[i].getIndices();
+      indices.resize(ind_1.size() + ind_2.size());
+      indices.insert(indices.end(), ind_1.begin(), ind_1.end());
+      indices.insert(indices.end(), ind_2.begin(), ind_2.end());
+      Line merged_line(L_m[1], L_m[0], cov, lines_[i-1].getStart(), lines_[i].getEnd(), indices);
+      // Project the new endpoints
+      merged_line.projectEndpoints();
+      lines_[i] = merged_line;
+    }
+    else
+    {
+      merged_lines.push_back(lines_[i-1]);
+    }
+
+    if (i == lines_.size() - 1)
+    {
+      merged_lines.push_back(lines_[i]);
+    }
+  }
+  lines_ = merged_lines;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
