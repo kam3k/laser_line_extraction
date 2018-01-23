@@ -182,14 +182,15 @@ void LineExtractionROS::cacheData(const sensor_msgs::LaserScan::ConstPtr &scan_m
 {
   std::vector<double> bearings, cos_bearings, sin_bearings;
   std::vector<unsigned int> indices;
-  unsigned int i = 0;
-  for (double b = scan_msg->angle_min; b <= scan_msg->angle_max; b += scan_msg->angle_increment)
+  const std::size_t num_measurements = std::ceil(
+      (scan_msg->angle_max - scan_msg->angle_min) / scan_msg->angle_increment);
+  for (std::size_t i = 0; i < num_measurements; ++i)
   {
+    const double b = scan_msg->angle_min + i * scan_msg->angle_increment;
     bearings.push_back(b);
     cos_bearings.push_back(cos(b));
     sin_bearings.push_back(sin(b));
     indices.push_back(i);
-    ++i;
   }
 
   line_extraction_.setCachedData(bearings, cos_bearings, sin_bearings, indices);
