@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -86,7 +86,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS message_runtime roscpp
-  DEPENDS eigen
 )
 
 ###########
@@ -94,7 +93,7 @@ catkin_package(
 ###########
 
 include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(include ${Eigen_INCLUDE_DIRS})
+include_directories(include ${EIGEN3_INCLUDE_DIRS})
 
 add_library(line src/line.cpp)
 target_link_libraries(line ${catkin_LIBRARIES})
