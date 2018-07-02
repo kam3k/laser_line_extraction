@@ -38,7 +38,7 @@ target_link_libraries(line_extraction ${catkin_LIBRARIES})
 
 add_library(line_extraction_ros src/line_extraction_ros.cpp)
 target_link_libraries(line_extraction_ros line line_extraction ${catkin_LIBRARIES})
-add_dependencies(line_extraction_ros)
+add_dependencies(line_extraction_ros laser_line_extraction_generate_messages_cpp)
 
 add_executable(line_extraction_node src/line_extraction_node.cpp)
 target_link_libraries(line_extraction_node line_extraction_ros ${catkin_LIBRARIES})
