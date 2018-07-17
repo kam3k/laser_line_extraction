@@ -45,7 +45,12 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   {
     it->leastSqFit();
   }
-  mergeLines();
+  
+  // If there is more than one line, check if lines should be merged based on the merging criteria
+  if (lines_.size() > 1)
+  {
+    mergeLines();
+  }
 
   lines = lines_;
 }
