@@ -45,7 +45,8 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   {
     it->leastSqFit();
   }
-  mergeLines();
+  if(lines_.size()>1)
+    mergeLines();
 
   lines = lines_;
 }
