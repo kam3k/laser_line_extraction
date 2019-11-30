@@ -19,7 +19,7 @@ public:
   LineExtraction();
   ~LineExtraction();
   // Run
-  void extractLines(std::vector<Line>&);
+  void extractLines(std::vector<Line>&, bool);
   // Data setting
   void setCachedData(const std::vector<double>&, const std::vector<double>&,
                      const std::vector<double>&, const std::vector<unsigned int>&);
@@ -53,7 +53,7 @@ private:
   void   filterOutlierPoints();
   void   filterLines();
   void   mergeLines();
-  void   split(const std::vector<unsigned int>&);
+  void   split(const std::vector<unsigned int>&, bool);
 };
 
 } // namespace line_extraction

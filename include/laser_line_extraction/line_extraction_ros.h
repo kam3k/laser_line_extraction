@@ -36,6 +36,7 @@ private:
   // Parameters
   std::string frame_id_;
   std::string scan_topic_;
+  bool verbose_;
   bool pub_markers_;
   // Line extraction
   LineExtraction line_extraction_;

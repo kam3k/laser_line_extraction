@@ -34,7 +34,7 @@ void LineExtractionROS::run()
 {
   // Extract the lines
   std::vector<Line> lines;
-  line_extraction_.extractLines(lines);
+  line_extraction_.extractLines(lines, verbose_);
 
   // Populate message
   laser_line_extraction::LineSegmentList msg;
@@ -119,6 +119,9 @@ void LineExtractionROS::loadParameters()
   nh_local_.param<int>("min_line_points", min_line_points, 9);
   line_extraction_.setMinLinePoints(static_cast<unsigned int>(min_line_points));
   ROS_DEBUG("min_line_points: %d", min_line_points);
+
+  nh_local_.param<bool>("verbose", verbose_, false);
+  ROS_DEBUG("verbose: %d", verbose_);
 
   ROS_DEBUG("*************************************");
 }
