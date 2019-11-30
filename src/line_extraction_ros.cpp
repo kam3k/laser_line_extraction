@@ -62,13 +62,9 @@ void LineExtractionROS::loadParameters()
   ROS_DEBUG("PARAMETERS:");
 
   // Parameters used by this node
-  
-  std::string frame_id, scan_topic;
-  bool pub_markers;
 
-  nh_local_.param<std::string>("frame_id", frame_id, "laser");
-  frame_id_ = frame_id;
-  ROS_DEBUG("frame_id: %s", frame_id_.c_str());
+  std::string scan_topic;
+  bool pub_markers;
 
   nh_local_.param<std::string>("scan_topic", scan_topic, "scan");
   scan_topic_ = scan_topic;
@@ -144,7 +140,7 @@ void LineExtractionROS::populateLineSegListMsg(const std::vector<Line> &lines,
     line_list_msg.line_segments.push_back(line_msg);
   }
   line_list_msg.header.frame_id = frame_id_;
-  line_list_msg.header.stamp = ros::Time::now();
+  line_list_msg.header.stamp = sensor_timestamp_;
 }
 
 void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines, 
@@ -172,7 +168,7 @@ void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
     marker_msg.points.push_back(p_end);
   }
   marker_msg.header.frame_id = frame_id_;
-  marker_msg.header.stamp = ros::Time::now();
+  marker_msg.header.stamp = sensor_timestamp_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -198,18 +194,23 @@ void LineExtractionROS::cacheData(const sensor_msgs::LaserScan::ConstPtr &scan_m
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Main LaserScan callback
+// Main LaserScan callback and line extraction process
 ///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr &scan_msg)
 {
   if (!data_cached_)
   {
-    cacheData(scan_msg); 
+    frame_id_ = scan_msg->header.frame_id;
+    cacheData(scan_msg);
     data_cached_ = true;
   }
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(), scan_msg->ranges.end());
   line_extraction_.setRangeData(scan_ranges_doubles);
+
+  sensor_timestamp_ = scan_msg->header.stamp;
+
+  run();
 }
 
 } // namespace line_extraction

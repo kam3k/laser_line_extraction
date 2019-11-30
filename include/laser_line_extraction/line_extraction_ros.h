@@ -32,6 +32,7 @@ private:
   ros::Subscriber scan_subscriber_;
   ros::Publisher line_publisher_;
   ros::Publisher marker_publisher_;
+  ros::Time sensor_timestamp_;
   // Parameters
   std::string frame_id_;
   std::string scan_topic_;
