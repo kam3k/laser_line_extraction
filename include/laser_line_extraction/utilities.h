@@ -48,7 +48,10 @@ struct PointParams
   std::vector<double> s;
 };
 
-double pi_to_pi(double angle)
+// Inlining this function will be faster
+// and also get rid of multiple definitions
+// error
+inline double pi_to_pi(double angle)
 {
   angle = fmod(angle, 2 * M_PI);
   if (angle >= M_PI)
