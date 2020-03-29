@@ -7,7 +7,7 @@ find_package(catkin QUIET COMPONENTS cmake_modules geometry_msgs
 find_package(Eigen3 REQUIRED)
 
 if (catkin_FOUND)
-    message("-- Catkin found. Compiling ROS components.")
+    message(STATUS "Catkin found. Compiling ROS components.")
     add_message_files(
       FILES
       LineSegment.msg
@@ -25,7 +25,7 @@ if (catkin_FOUND)
       CATKIN_DEPENDS geometry_msgs message_runtime roscpp sensor_msgs visualization_msgs
     )
 else()
-    message("-- Catkin NOT found. Ommitting ROS components.")
+    message(STATUS "Catkin NOT found. Ommitting ROS components.")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
