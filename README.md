@@ -67,6 +67,8 @@ The parameters are listed in alphabetical order.
 	- Lines with fewer points than this are not published.
 - `min_range` (default: 0.4)
 	- Points closer than this are ignored (m).
+- `max_range` (default: 10000.0)
+	- Points farther than this are ignored (m).
 - `min_split_dist` (default: 0.05)
 	- When performing "split" step of split and merge, a split between two points results when the two points are at least this far apart (m).
 - `outlier_dist` (default: 0.05)

@@ -31,6 +31,7 @@ struct Params
   double max_line_gap;
   double min_line_length;
   double min_range;
+  double max_range;
   double min_split_dist;
   double outlier_dist;
   unsigned int min_line_points;

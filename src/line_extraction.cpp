@@ -27,7 +27,7 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   lines_.clear();
 
   // Filter indices
-  filterClosePoints();
+  filterCloseAndFarPoints();
   filterOutlierPoints();
 
   // Return no lines if not enough points left
@@ -125,6 +125,11 @@ void LineExtraction::setMinRange(double value)
   params_.min_range = value;
 }
 
+void LineExtraction::setMaxRange(double value)
+{
+  params_.max_range = value;
+}
+
 void LineExtraction::setMinSplitDist(double value)
 {
   params_.min_split_dist = value;
@@ -153,13 +158,14 @@ double LineExtraction::distBetweenPoints(unsigned int index_1, unsigned int inde
 ///////////////////////////////////////////////////////////////////////////////
 // Filtering points
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::filterClosePoints()
+void LineExtraction::filterCloseAndFarPoints()
 {
   std::vector<unsigned int> output;
   for (std::vector<unsigned int>::const_iterator cit = filtered_indices_.begin(); 
        cit != filtered_indices_.end(); ++cit)
   {
-    if (r_data_.ranges[*cit] >= params_.min_range)
+    const double& range = r_data_.ranges[*cit];
+    if (range >= params_.min_range && range <= params_.max_range)
     {
       output.push_back(*cit);
     }

@@ -11,6 +11,7 @@
     <param name="~max_line_gap" value="0.5" />
     <param name="~min_line_length" value="0.7" />
     <param name="~min_range" value="0.5" />
+    <param name="~max_range" value="250.0" />
     <param name="~min_split_dist" value="0.04" />
     <param name="~outlier_dist" value="0.06" />
     <param name="~min_line_points" value="10" />

@@ -33,6 +33,7 @@ public:
   void setMinLineLength(double);
   void setMinLinePoints(unsigned int);
   void setMinRange(double);
+  void setMaxRange(double);
   void setMinSplitDist(double);
   void setOutlierDist(double);
 
@@ -49,7 +50,7 @@ private:
   double chiSquared(const Eigen::Vector2d&, const Eigen::Matrix2d&,
                     const Eigen::Matrix2d&);
   double distBetweenPoints(unsigned int index_1, unsigned int index_2);
-  void   filterClosePoints();
+  void   filterCloseAndFarPoints();
   void   filterOutlierPoints();
   void   filterLines();
   void   mergeLines();
