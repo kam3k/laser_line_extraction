@@ -46,8 +46,12 @@ target_link_libraries(line_extraction_node line_extraction_ros ${catkin_LIBRARIE
 include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories(include ${EIGEN3_INCLUDE_DIRS})
 
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_laser_line_extraction.cpp)
-
 install(TARGETS line_extraction_node RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(TARGETS line_extraction_ros line_extraction line ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION} LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION} RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 install(DIRECTORY include/${PROJECT_NAME}/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  catkin_add_gtest(${PROJECT_NAME}_gtest test/test_line_extaction.cpp)
+  target_link_libraries(${PROJECT_NAME}_gtest gtest_main line_extraction line)
+endif()
