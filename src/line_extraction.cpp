@@ -20,7 +20,7 @@ LineExtraction::~LineExtraction()
 ///////////////////////////////////////////////////////////////////////////////
 // Main run function
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::extractLines(std::vector<Line>& lines) 
+  void LineExtraction::extractLines(std::vector<Line>& lines, bool verbose)
 {
   // Resets
   filtered_indices_ = c_data_.indices;
@@ -37,7 +37,10 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   }
 
   // Split indices into lines and filter out short and sparse lines
-  split(filtered_indices_);
+  split(filtered_indices_, verbose);
+
+  if(verbose) std::cout << "size of lines: " << lines_.size() << std::endl;
+
   filterLines();
 
   // Fit each line using least squares and merge colinear lines
@@ -45,7 +48,7 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   {
     it->leastSqFit();
   }
-  
+
   // If there is more than one line, check if lines should be merged based on the merging criteria
   if (lines_.size() > 1)
   {
@@ -53,6 +56,13 @@ void LineExtraction::extractLines(std::vector<Line>& lines)
   }
 
   lines = lines_;
+
+  if(verbose)
+    {
+      std::cout << "========== result: ===============" << std::endl;
+      for(const auto& line: lines)
+        std::cout << line.getIndices().at(0) << " to " << line.getIndices().back() << std::endl;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -221,6 +231,8 @@ void LineExtraction::filterOutlierPoints()
       }
     }
 
+    if (std::isinf(r_data_.ranges[p_i])) continue;
+
     output.push_back(p_i);
   }
 
@@ -298,13 +310,15 @@ void LineExtraction::mergeLines()
 ///////////////////////////////////////////////////////////////////////////////
 // Splitting points into lines
 ///////////////////////////////////////////////////////////////////////////////
-void LineExtraction::split(const std::vector<unsigned int>& indices)
+void LineExtraction::split(const std::vector<unsigned int>& indices, bool verbose)
 {
   // Don't split if only a single point (only occurs when orphaned by gap)
   if (indices.size() <= 1)
   {
     return;
   }
+
+  if(verbose) std::cout << indices[0] << " to " << indices.back() << std::endl;
 
   Line line(c_data_, r_data_, params_, indices);
   line.endpointFit();
@@ -317,17 +331,24 @@ void LineExtraction::split(const std::vector<unsigned int>& indices)
   for (std::size_t i = 1; i < indices.size() - 1; ++i)
   {
     dist = line.distToPoint(indices[i]);
+
+
     if (dist > dist_max)
     {
       dist_max = dist;
       i_max = i;
+
     }
     gap = distBetweenPoints(indices[i], indices[i+1]);
+
     if (gap > gap_max)
     {
       gap_max = gap;
       i_gap = i;
+
     }
+
+    if(verbose) std::cout << indices[i] << ": " << r_data_.ranges.at(indices[i]) << ", dist:" << dist << std::endl;
   }
 
   // Check for gaps at endpoints
@@ -344,18 +365,21 @@ void LineExtraction::split(const std::vector<unsigned int>& indices)
     i_gap = indices.size() - 1;
   }
 
+  if(verbose) std::cout << "max dist: " << dist_max << " in " << indices[i_max] << "; max gap: " << gap_max << " in " << indices[i_gap] << std::endl; 
   // Check if line meets requirements or should be split
   if (dist_max < params_.min_split_dist && gap_max < params_.max_line_gap)
   {
+    if(verbose) std::cout << " --------------------- add line: " << indices[0] << " to " << indices.back() << std::endl;
     lines_.push_back(line);
   }
   else
   {
     int i_split = dist_max >= params_.min_split_dist ? i_max : i_gap;
-    std::vector<unsigned int> first_split(&indices[0], &indices[i_split - 1]);
-    std::vector<unsigned int> second_split(&indices[i_split], &indices.back());
-    split(first_split);
-    split(second_split);
+    std::vector<unsigned int> first_split(&indices[0], &indices[i_split]);
+    if(verbose) std::cout << indices[i_split - 1] << "; " << indices[i_split] << std::endl;
+    std::vector<unsigned int> second_split(&indices[i_split], &indices.back() + 1);
+    split(first_split, verbose);
+    split(second_split, verbose);
   }
 
 }
