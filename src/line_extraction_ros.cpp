@@ -42,7 +42,7 @@ void LineExtractionROS::loadParameters()
   scan_topic_ = scan_topic;
   ROS_DEBUG("scan_topic: %s", scan_topic_.c_str());
 
-  nh_local_.param<double>("frequency", frequency, 25);
+  nh_local_.param<double>("frequency", frequency, 30);
   ROS_DEBUG("Frequency set to %0.1f Hz", frequency);
   frequency_ = std::make_unique<ros::Rate>(frequency);
 

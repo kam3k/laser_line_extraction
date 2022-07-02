@@ -46,15 +46,15 @@ Laser Line Extraction subscribes to a single topic and publishes one or two topi
 - `/line_segments` (laser\_line\_extraction/LineSegmentList)
 	- A list of line segments extracted from a laser scan.
 - `/line_markers` ([visualization_msgs/Marker](http://docs.ros.org/api/visualization_msgs/html/msg/Marker.html))
-	- (optional) Markers so that the extracted lines can be visualized in rviz (see above image). Can be toggled (see Parameters).
+	- Markers so that the extracted lines can be visualized in rviz (see above image). Messages are being generated and published when there are at least one subscriber.
 
 ## Parameters
 The parameters are listed in alphabetical order.
 
+- `frequency` (default: 30.0)
+  - The maximum rate of processing LaserScan messages (msg/sec).
 - `bearing_std_dev` (default: 0.001)
 	- The standard deviation of bearing uncertainty in the laser scans (rad).
-- `frame_id` (default: "laser")
-	- The frame in which the line segments are published.
 - `least_sq_angle_thresh` (default: 0.0001)
 	- Change in angle (rad) threshold to stop iterating least squares (`least_sq_radius_thresh` must also be met).
 - `least_sq_radius_thresh` (default: 0.0001)
@@ -73,8 +73,6 @@ The parameters are listed in alphabetical order.
 	- When performing "split" step of split and merge, a split between two points results when the two points are at least this far apart (m).
 - `outlier_dist` (default: 0.05)
 	- Points who are at least this distance from all their neighbours are considered outliers (m).
-- `publish_markers` (default: false)
-	- Whether or not markers are published.
 - `range_std_dev` (default: 0.02)
 	- The standard deviation of range uncertainty in the laser scans (m).
 - `scan_topic` (default: "scan")
