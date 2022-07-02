@@ -16,40 +16,12 @@ LineExtractionROS::LineExtractionROS(ros::NodeHandle& nh, ros::NodeHandle& nh_lo
 {
   loadParameters();
   line_publisher_ = nh_.advertise<laser_line_extraction::LineSegmentList>("line_segments", 1);
+  marker_publisher_ = nh_.advertise<visualization_msgs::Marker>("line_markers", 1);
   scan_subscriber_ = nh_.subscribe(scan_topic_, 1, &LineExtractionROS::laserScanCallback, this);
-  if (pub_markers_)
-  {
-    marker_publisher_ = nh_.advertise<visualization_msgs::Marker>("line_markers", 1);
-  }
 }
 
 LineExtractionROS::~LineExtractionROS()
 {
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Run
-///////////////////////////////////////////////////////////////////////////////
-void LineExtractionROS::run()
-{
-  // Extract the lines
-  std::vector<Line> lines;
-  line_extraction_.extractLines(lines);
-
-  // Populate message
-  laser_line_extraction::LineSegmentList msg;
-  populateLineSegListMsg(lines, msg);
-  
-  // Publish the lines
-  line_publisher_.publish(msg);
-
-  // Also publish markers if parameter publish_markers is set to true
-  if (pub_markers_)
-  {
-    visualization_msgs::Marker marker_msg;
-    populateMarkerMsg(lines, marker_msg);
-    marker_publisher_.publish(marker_msg);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,20 +35,16 @@ void LineExtractionROS::loadParameters()
 
   // Parameters used by this node
   
-  std::string frame_id, scan_topic;
-  bool pub_markers;
-
-  nh_local_.param<std::string>("frame_id", frame_id, "laser");
-  frame_id_ = frame_id;
-  ROS_DEBUG("frame_id: %s", frame_id_.c_str());
+  std::string scan_topic;
+  double frequency;
 
   nh_local_.param<std::string>("scan_topic", scan_topic, "scan");
   scan_topic_ = scan_topic;
   ROS_DEBUG("scan_topic: %s", scan_topic_.c_str());
 
-  nh_local_.param<bool>("publish_markers", pub_markers, false);
-  pub_markers_ = pub_markers;
-  ROS_DEBUG("publish_markers: %s", pub_markers ? "true" : "false");
+  nh_local_.param<double>("frequency", frequency, 30);
+  ROS_DEBUG("Frequency set to %0.1f Hz", frequency);
+  frequency_ = std::make_unique<ros::Rate>(frequency);
 
   // Parameters used by the line extraction algorithm
 
@@ -147,8 +115,6 @@ void LineExtractionROS::populateLineSegListMsg(const std::vector<Line> &lines,
     line_msg.end = cit->getEnd(); 
     line_list_msg.line_segments.push_back(line_msg);
   }
-  line_list_msg.header.frame_id = frame_id_;
-  line_list_msg.header.stamp = ros::Time::now();
 }
 
 void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines, 
@@ -175,8 +141,6 @@ void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
     p_end.z = 0;
     marker_msg.points.push_back(p_end);
   }
-  marker_msg.header.frame_id = frame_id_;
-  marker_msg.header.stamp = ros::Time::now();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -214,6 +178,27 @@ void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(), scan_msg->ranges.end());
   line_extraction_.setRangeData(scan_ranges_doubles);
+
+  // Extract the lines
+  std::vector<Line> lines;
+  line_extraction_.extractLines(lines);
+
+  // Populate message and publish the lines
+  laser_line_extraction::LineSegmentList msg;
+  populateLineSegListMsg(lines, msg);
+  msg.header = scan_msg->header;
+  line_publisher_.publish(msg);
+
+  // Also publish markers if someone is subscribed
+  if (marker_publisher_.getNumSubscribers() > 0)
+  {
+    visualization_msgs::Marker marker_msg;
+    populateMarkerMsg(lines, marker_msg);
+    marker_msg.header = scan_msg->header;
+    marker_publisher_.publish(marker_msg);
+  }
+
+  frequency_->sleep();
 }
 
 } // namespace line_extraction

@@ -22,8 +22,6 @@ public:
   // Constructor / destructor
   LineExtractionROS(ros::NodeHandle&, ros::NodeHandle&);
   ~LineExtractionROS();
-  // Running
-  void run();
 
 private:
   // ROS
@@ -33,9 +31,8 @@ private:
   ros::Publisher line_publisher_;
   ros::Publisher marker_publisher_;
   // Parameters
-  std::string frame_id_;
+  std::unique_ptr<ros::Rate> frequency_;
   std::string scan_topic_;
-  bool pub_markers_;
   // Line extraction
   LineExtraction line_extraction_;
   bool data_cached_; // true after first scan used to cache data
